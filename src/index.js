@@ -1,12 +1,8 @@
-var sceneWidth;
-var sceneHeight;
 var camera;
 var scene;
 var renderer;
 var dom;
-var hero;
-var sun;
-var ground;
+var hero = generateHero();
 var orbitControl;
 
 init();
@@ -16,8 +12,8 @@ function init() {
 }
 
 function createScene() {
-	sceneWidth = window.innerWidth;
-	sceneHeight = window.innerHeight;
+	var sceneWidth = window.innerWidth;
+	var sceneHeight = window.innerHeight;
 
 	camera = new THREE.PerspectiveCamera(60, sceneWidth / sceneHeight, 0.1, 1000);
 	camera.position.z = 5;
@@ -32,38 +28,53 @@ function createScene() {
 	dom.appendChild(renderer.domElement);
 
 	scene = new THREE.Scene();
-	//add items to scene
-	var heroGeometry = new THREE.BoxGeometry(1, 1, 1);
-	var heroMaterial = new THREE.MeshStandardMaterial({ color: 0x883333 });
-	hero = new THREE.Mesh(heroGeometry, heroMaterial);
-	hero.castShadow = true;
-	hero.receiveShadow = false;
-	hero.position.y = 2;
 	scene.add(hero);
-
-	var planeGeometry = new THREE.PlaneGeometry(5, 5, 4, 4);
-	var planeMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
-	ground = new THREE.Mesh(planeGeometry, planeMaterial);
-	ground.receiveShadow = true;
-	ground.castShadow = false;
-	ground.rotation.x = -Math.PI / 2;
-	scene.add(ground);
-
-	sun = new THREE.DirectionalLight(0xffffff, 0.8);
-	sun.position.set(0, 4, 1);
-	sun.castShadow = true;
-	scene.add(sun);
-	//Set up shadow properties for the sun light
-	sun.shadow.mapSize.width = 256;
-	sun.shadow.mapSize.height = 256;
-	sun.shadow.camera.near = 0.5;
-	sun.shadow.camera.far = 50;
+	scene.add(generateGround());
+	scene.add(generateSun());
 
 	orbitControl = new THREE.OrbitControls(camera, renderer.domElement);
 	orbitControl.addEventListener('change', render);
 	orbitControl.enableZoom = false;
 
 	window.addEventListener('resize', onWindowResize, false);
+}
+
+function generateHero() {
+	var heroGeometry = new THREE.BoxGeometry(1, 1, 1);
+	var heroMaterial = new THREE.MeshStandardMaterial({ color: 0x883333 });
+
+	hero = new THREE.Mesh(heroGeometry, heroMaterial);
+	hero.castShadow = true;
+	hero.receiveShadow = false;
+	hero.position.y = 2;
+
+	return hero;
+}
+
+function generateGround() {
+	var planeGeometry = new THREE.PlaneGeometry(5, 5, 4, 4);
+	var planeMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+
+	ground = new THREE.Mesh(planeGeometry, planeMaterial);
+	ground.receiveShadow = true;
+	ground.castShadow = false;
+	ground.rotation.x = -Math.PI / 2;
+
+	return ground;
+}
+
+function generateSun() {
+	sun = new THREE.DirectionalLight(0xffffff, 0.8);
+	sun.position.set(0, 4, 1);
+	sun.castShadow = true;
+
+	//Set up shadow properties for the sun light
+	sun.shadow.mapSize.width = 256;
+	sun.shadow.mapSize.height = 256;
+	sun.shadow.camera.near = 0.5;
+	sun.shadow.camera.far = 50;
+
+	return sun;
 }
 
 function update() {
@@ -80,8 +91,8 @@ function render() {
 }
 
 function onWindowResize() {
-	sceneHeight = window.innerHeight;
-	sceneWidth = window.innerWidth;
+	var sceneHeight = window.innerHeight;
+	var sceneWidth = window.innerWidth;
 	renderer.setSize(sceneWidth, sceneHeight);
 	camera.aspect = sceneWidth / sceneHeight;
 	camera.updateProjectionMatrix();
