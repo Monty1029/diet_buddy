@@ -449,6 +449,12 @@ function explode() {
 	}
 	explosionPower = 1.07;
 	particles.visible = true;
+	heroY = 0.99;
+	heroX = 0.99;
+	heroZ = 0.99;
+	hero.scale.y *= heroY;
+	hero.scale.x *= heroX;
+	hero.scale.z *= heroZ;
 }
 
 function render() {
